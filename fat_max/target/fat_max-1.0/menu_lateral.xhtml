@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body >
+        <p:panel header="Menu" style="padding: 0 !important; margin-right: 4px; font-size: 14px;" >
+            <p:menu  style="width: 100%!important; padding: 0 !important; margin: 0 !important; border:transparent 0 !important; font-size: 12px;"  
+                     toggleable="true" model="#{permissoesBean.model}" />
+                    <!--p:submenu label="Visitas" style="padding: 0 !important; "  >
+                        <p:menuitem 
+                            value="Estatística-Visitas por área" 
+                            ajax="true"
+                            icon="pi pi-list"
+                            outcome="estatistica_visitas_por_area"
+                            style="padding: 4px 0 !important; font-size: 14px;" 
+                            />
+                        
+                         <p:menuitem 
+                            value="Estatística-Visitas diaria por área" 
+                            ajax="true"
+                            icon="pi pi-list"
+                            outcome="estatistica_por_areas_diaria"
+                            style="padding: 4px 0 !important; font-size: 14px;" 
+                            />
+                        <p:menuitem 
+                            value="Estatística-Visitas por funcionario" 
+                            ajax="true"
+                            icon="pi pi-list"
+                            outcome="estatistica_visitas_por_area"
+                            style="padding: 4px 0 !important; font-size: 14px;" 
+                            />
+                    </p:submenu -->
+                <!--</p:menu-->
+        </p:panel>
+    </h:body>
+</html>
+

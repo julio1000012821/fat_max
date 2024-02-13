@@ -1,0 +1,280 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="template.xhtml">
+    <ui:define name="title">
+        Emitir Factura
+    </ui:define>
+    <ui:define name="centerContent" >
+        <h:form id="formFactura">
+            <p:idleMonitor timeout="600000">
+                <p:ajax event="idle" listener="#{loginBean.logout()}" />
+            </p:idleMonitor>
+            <p:growl id="message" showDetail="true" />
+          <div class="container  py-5">    
+            <div class="card p-col-10">
+                 <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                   <div class="bg-gradient-info shadow-info border-radius-lg pt-3 pb-2">
+                       <div class="row g-3">
+                           <div class="col-md-11">
+                             <h6 class="text-white text-capitalize ps-3">Nova Factura</h6>
+                           </div>
+                      </div>
+                   </div>
+                 </div>
+              <div class="card-body">
+                <div class="row g-2"  >
+                        <div class="col-md-12 py-2">
+                            <p:messages id="message2" showDetail="true" closable="true">
+                              <p:autoUpdate/>
+                            </p:messages>
+                        </div>
+                        <div class="col-md-6"> 
+                            <p:outputLabel for="idCli" value="Cliente" />
+                            <p:selectOneMenu  
+                                    id="idCli" 
+                                    class="form-control"
+                                    value="#{emitirFacturaBean.cliente}"
+                                    converter="clienteConverter"
+                                    filter="true"
+                                    required="true"
+                                    requiredMessage="Selecione o cliente"
+                                    > 
+                                <p:ajax event="change" process="@this" update="numIdentific" />
+                                     <f:selectItem itemLabel="Selecione..."  noSelectionOption="true"   />
+                                     <f:selectItems 
+                                         value="#{clienteBean.listar()}"
+                                         var="item"
+                                         itemValue="#{item}"
+                                         itemLabel="#{item.nome}"
+                                                    />
+                                </p:selectOneMenu>
+                        </div>
+                       <div class="col-md-6" > 
+                            <p:outputLabel value="NIF"  for="numIdentific" />
+                            <p:inputText value="#{emitirFacturaBean.cliente.nif}" readonly="true" id="numIdentific" class="form-control" />
+                       </div>
+                      <div class="col-md-6"> 
+                            <p:outputLabel for="idProd" value="Produto/Serviço" />
+                            <p:selectOneMenu  
+                                    id="idProd" 
+                                    class="form-control"
+                                    value="#{emitirFacturaBean.produtoSelect}"
+                                    converter="produtoConverter"
+                                    filter="true"
+                                    required="true"
+                                    requiredMessage="Selecione o produto"
+                                    > 
+                                <p:ajax event="change" process="@this" update="prec, quantiE"  />
+                                     <f:selectItem itemLabel="Selecione..."  noSelectionOption="true"   />
+                                     <f:selectItems 
+                                         value="#{produtoBean.listar()}"
+                                         var="item"
+                                         itemValue="#{item}"
+                                         itemLabel="#{item.descricao}"
+                                                    />
+                                </p:selectOneMenu>
+                        </div>
+                        <div class="col-md-3" > 
+                            <p:outputLabel value="Codigo de Barra"  for="codBarra" />
+                            <p:inputText  id="codBarra"  class="form-control" >
+                            </p:inputText>
+                        </div>
+                       <div class="col-md-3" > 
+                            <p:outputLabel value="Preço"  for="prec" />
+                            <p:inputText value="#{emitirFacturaBean.produtoSelect.precoVenda}" id="prec" readonly="true" class="form-control" >
+                                <f:convertNumber pattern="#,##0.00" />
+                            </p:inputText>
+                       </div>
+                       <div class="col-md-2" > 
+                            <p:outputLabel value="Qtd Existente"  for="quantiE" />
+                            <p:inputText value="#{emitirFacturaBean.produtoSelect.quantidadeExistente}" readonly="true" id="quantiE" class="form-control" >
+                                <f:convertNumber pattern="#,##0.00" />
+                            </p:inputText>
+                       </div>
+                       <div class="col-md-2" > 
+                            <p:outputLabel value="Qtd selecionada"  for="quantiDef" />
+                            <p:inputText value="#{emitirFacturaBean.quantidadeSelect}" id="quantiDef" class="form-control" >
+                                <p:ajax event="change" process="@this" />
+                            </p:inputText>
+                       </div>
+                      <div class="col-md-2" style="margin-right:0;" > 
+                            <p:commandButton value="Adicionar" 
+                            style="position: relative;top:45%;"
+                            icon="pi pi-cart-plus"
+                            id="btnAdd"
+                            process="@this"
+                            update="formFactura"
+                            action="#{emitirFacturaBean.adicionar()}"  />
+                       </div>
+                       <div class="col-md-2" > 
+                            <p:outputLabel value="Moeda"  for="moedaDef" />
+                            <p:selectOneMenu  
+                                    id="moedaDef" 
+                                    class="form-control"
+                                    value="#{emitirFacturaBean.moeda}"
+                                    converter="moedaConverter"
+                                    filter="true"
+                                    required="true"
+                                    requiredMessage="Selecione o produto"
+                                    > 
+                                <p:ajax event="change" process="@this" update="idCambio"  />
+                                     <f:selectItem itemLabel="Selecione..."  noSelectionOption="true"   />
+                                     <f:selectItems 
+                                         value="#{moedaBean.listar()}"
+                                         var="item"
+                                         itemValue="#{item}"
+                                         itemLabel="#{item.nome}"
+                                                    />
+                                </p:selectOneMenu>
+                        </div>
+                    <div class="col-md-1" > 
+                            <p:outputLabel value="Valor" for="idCambio" />
+                            <p:inputText value="#{emitirFacturaBean.moeda.valor}" id="idCambio" class="form-control" readonly="true" >
+                                <f:convertNumber pattern="#,##0.00" />
+                            </p:inputText>
+                       </div>
+                    <div class="col-md-2">
+                        <p:commandButton value="Gerar Factura" 
+                            icon="pi pi-shopping-bag"
+                            style="position: relative;top:45%; float: right;"
+                            id="btnsave"
+                            process="@this"
+                            update="formFactura"
+                            action="#{emitirFacturaBean.salvarFactura()}"  />
+                    </div>
+               </div>
+               <div class="row py-1">
+                   <div class="col-md-9" > 
+                       <p:panel header="Produtos/Serviços selecionados">
+                        <p:dataTable id="datalist" widgetVar="dtProducts" var="item" value="#{emitirFacturaBean.listaTemp}"
+                                 reflow="true" 
+                                 styleClass="products-table"
+                                 rowKey="#{item.idFaturaItem}"
+                                 paginator="true"
+                                 rows="10" 
+                                 rowSelectMode="add"
+                                 rowIndexVar="index"
+                                 emptyMessage="Nenhum registo encontrado."
+                                 paginatorPosition="bottom"
+                                 style="font-size: 13px;"
+                                 >
+                         <f:facet name="header">
+                             <div class="products-table-header" >
+                                 <!--p:commandButton id="toggler" type="button" value="Colunas" icon="pi pi-align-justify"/>
+                                 <p:columnToggler datasource="datalist" trigger="toggler">
+                                     <p:ajax />
+                                 </p:columnToggler-->
+                                 <p:outputLabel value="Total de itens: (#{emitirFacturaBean.listaTemp.size()})"  style="color:black;"  />
+                                 <span class="filter-container ui-input-icon-left" style="float:right;" >
+                                   <i class="pi pi-search"></i>
+                                   <p:inputText id="globalFilter" onkeydown="PF('dtProducts').filter()" placeholder="Pesquisar"  />      
+                                 </span>
+                             </div>
+                         </f:facet>
+                           <p:column headerText="Nº Ord." style="width: 50px;" >
+                                <h:outputText value="#{index + 1}" />
+                          </p:column>
+                        <p:column headerText="Descrição" sortBy="#{item.idProduto.descricao}"  filterStyle="display:none;" >
+                             <h:outputText value="#{item.idProduto.descricao}" />
+                          </p:column>
+                             <p:column headerText="Categoria" sortBy="#{item.idProduto.idCategoriaProduto.nome}"  filterBy="#{item.idProduto.idCategoriaProduto.nome}" filterStyle="display:none;" >
+                                 <h:outputText value="#{item.idProduto.idCategoriaProduto.nome}" />
+                          </p:column>
+                          <p:column headerText="Quantidade" style="text-align: center;">
+                             <h:outputText value="#{item.quantidade}" />
+                          </p:column>
+                          <p:column headerText="preço Unitário" style="text-align: center;">
+                             <h:outputText value="#{item.idProduto.precoVenda}" >
+                                 <f:convertNumber pattern="#,##0.00" />
+                             </h:outputText>
+                          </p:column>
+                          <p:column headerText="Total"  style="text-align: center;">
+                              <h:outputText value="#{item.total}" >
+                                   <f:convertNumber pattern="#,##0.00" />
+                                 </h:outputText>
+                          </p:column>
+                          <p:column exportable="false" headerText="Operações">
+                             <p:commandButton 
+                                 class="ui-button-danger rounded-button"
+                                 icon="pi pi-trash"
+                                 process="@this"
+                                 update="@form"
+                                 ajax="true"
+                                 action="#{emitirFacturaBean.removerItemListaTemp(item)}" 
+                             /> 
+                        </p:column>
+                  </p:dataTable>
+                </p:panel>
+               </div>
+                <div class="col-md-3" >
+                    <p:panel >
+                        <div class="row">
+                            <div class="col-md-12" > 
+                                <p:outputLabel value="Total da factura"  for="valTotal" />
+                                <p:inputText value="#{emitirFacturaBean.totalFatura}" readonly="true" id="valTotal" class="form-control" >
+                                    <f:convertNumber pattern="#,##0.00" />
+                                </p:inputText>
+                            </div>
+                            <div class="col-md-12" > 
+                                <p:outputLabel value="Forma de pagamento"  for="formPag" />
+                                <p:selectOneMenu  
+                                    id="formPag" 
+                                    class="form-control"
+                                    value="#{emitirFacturaBean.formaPagamento}"
+                                    converter="formaPagamentoConverter"
+                                    filter="true"
+                                    required="true"
+                                    requiredMessage="Selecione a forma de Pagamento"
+                                    > 
+                                    <p:ajax event="change" process="@this" update="valCliente,valTransf" listener="#{emitirFacturaBean.calcularValorCliente()}" />
+                                     <f:selectItem itemLabel="Selecione..."  noSelectionOption="true"   />
+                                     <f:selectItems 
+                                         value="#{formaPagamentoBean.listar()}"
+                                         var="item"
+                                         itemValue="#{item}"
+                                         itemLabel="#{item.nome}"
+                                                    />
+                                </p:selectOneMenu>
+                            </div>
+                            <div class="col-md-12" > 
+                                <p:outputLabel value="Valor da transferência"  for="valTransf" />
+                                <p:inputText value="#{emitirFacturaBean.valorTransferencia}" disabled="#{emitirFacturaBean.validatorParcialTransferencia}" id="valTransf" class="form-control" >
+                                    <p:ajax event="change" process="@this" />
+                                </p:inputText>
+                            </div>
+                            <div class="col-md-12" > 
+                                <p:outputLabel value="Valor Entregue"  for="valCliente" />
+                                <p:inputText value="#{emitirFacturaBean.valorEntregeCliente}" id="valCliente" class="form-control" >
+                                    <!--f:ajax event="keydown" execute="valTroco" listener="" /-->
+                                    <p:ajax event="keydown" process="@this" update="valTroco" listener="#{emitirFacturaBean.calcularTroco()}" />
+                                </p:inputText>
+                            </div>
+                            <div class="col-md-12" > 
+                                <p:outputLabel value="Troco"  for="valTroco" />
+                                <p:inputText value="#{emitirFacturaBean.troco}"  readonly="true" id="valTroco" class="form-control" >
+                                  <f:convertNumber pattern="#,##0.00" />
+                                </p:inputText>
+                            </div>
+                        </div>  
+                    </p:panel>
+                </div>      
+               </div>
+               <div class="row g-5"> 
+                   <div class="col-md-12" > 
+                    
+                   </div>
+                </div>
+            </div>
+           </div>
+        </div>
+        </h:form>
+    </ui:define>  
+   </ui:composition>
+</html>
+

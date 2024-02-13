@@ -1,0 +1,180 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="template.xhtml">
+        <ui:define name="title">
+            Registo de Utilizadores
+        </ui:define> 
+        <ui:define name="centerContent" >
+            <h:form id="formList">
+                <p:idleMonitor timeout="600000">
+                    <p:ajax event="idle" listener="#{loginBean.logout()}" />
+                </p:idleMonitor>
+                <p:growl id="message" showDetail="true"/>
+                <div class="container  py-5">    
+                    <div class="card p-col-10">
+                        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                            <div class="bg-gradient-info shadow-info border-radius-lg pt-3 pb-2">
+                                <div class="row g-3">
+                                    <div class="col-md-10">
+                                         <h6 class="text-white text-capitalize ps-3">Utilizadores</h6>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="icon icon-shape" style="position: relative;left:40px; ">
+                                            <p:commandButton type="button" icon="pi pi-plus" title="Novo utilizador" styleClass="rounded-button ui-button-warning" 
+                                                             update="formNovoUtilizador" onclick="PF('dlg1').show()" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+                            <div class="card-body">
+                                <div class="row g-2">
+                                        <p:toolbar>
+                                              <p:toolbarGroup align="right">
+                                                  <p:commandButton icon="pi pi-file-excel" styleClass="ui-button-info" title="exportar csv" ajax="false">
+                                                           <p:dataExporter type="csv" target="datalist" fileName="categorias"  />
+                                                       </p:commandButton>
+                                                       <!--p:commandButton
+                                                           icon="pi pi-file-excel" 
+                                                           styleClass="ui-button-help" 
+                                                           title="exportar Excel" 
+                                                           action ="#{produtoBean.exportarExcel()}"
+                                                           onclick="target='_blank'"
+                                                           ajax="false" /-->
+                                                           
+                                                       <p:commandButton icon="pi pi-file-excel" styleClass="ui-button-help" title="exportar xml/xls" ajax="false">
+                                                           <p:dataExporter type="xls" target="datalist" fileName="utilizadores" />
+                                                       </p:commandButton>
+                                              </p:toolbarGroup>
+                                       </p:toolbar>
+                                </div>
+                                <p:dataTable id="datalist" widgetVar="dtProducts" var="item" value="#{utilizadorBean.items}"
+                                reflow="true" 
+                                styleClass="products-table"
+                                selection="#{utilizadorBean.listaFiltrada}"
+                                rowKey="#{item.idUtilizador}"
+                                paginator="true"
+                                rows="10" 
+                                rowSelectMode="add"
+                                rowIndexVar="index"
+                                emptyMessage="Nenhum registo encontrado."
+                                paginatorPosition="bottom"
+                                style="font-size: 13px;"
+                                >
+                                   <f:facet name="header">
+                                       <div class="products-table-header" >
+                                           <p:commandButton id="toggler" type="button" value="Colunas" icon="pi pi-align-justify"/>
+                                           <p:columnToggler datasource="datalist" trigger="toggler">
+                                               <p:ajax />
+                                           </p:columnToggler>
+                                           <p:outputLabel value="n" style="color:white;"  />
+                                           <span class="filter-container ui-input-icon-left" style="float:right;" >
+                                             <i class="pi pi-search"></i>
+                                             <p:inputText id="globalFilter" onkeydown="PF('dtProducts').filter()" placeholder="Pesquisar"  />      
+                                           </span>
+                                       </div>
+                                   </f:facet>
+                                  <p:column headerText="Nº Ord." style="width: 50px;" >
+                                       <h:outputText value="#{index + 1}" />
+                                 </p:column>
+                                 <p:column headerText="Nome" sortBy="#{item.nome}"  filterBy="#{item.nome}" filterStyle="display:none;" >
+                                    <h:outputText value="#{item.nome}"/>
+                                 </p:column>
+                                    <p:column headerText="perfil" sortBy="#{item.idPerfil.nome}"  filterBy="#{item.idPerfil.nome}" filterStyle="display:none;" >
+                                    <h:outputText value="#{item.idPerfil.nome}"/>
+                                 </p:column>
+                                 <p:column exportable="false" headerText="Operações">
+                                    <p:commandButton 
+                                        icon="pi pi-pencil"                                     
+                                        styleClass="edit-button rounded-button ui-button-success" 
+                                        oncomplete="PF('dlgEditar').show()" 
+                                        process="@this"
+                                        update="@form"
+                                        action="#{utilizadorBean.setUtilizador(item)}"
+                                        >
+                                       <!--<f:setPropertyActionListener value="#//{product}" target="#//{crudView.selectedProduct}"/>
+                                        <p:resetInput target=":form:manage-product-content"/>-->
+                                    </p:commandButton>
+                                    <p:commandButton class="ui-button-danger rounded-button"
+                                                     icon="pi pi-trash"
+                                                     process="@this"
+                                                     update="@form"
+                                                     ajax="true"
+                                                     action="#{utilizadorBean.remover(item)}" /> 
+                               </p:column>
+                               </p:dataTable>
+                            </div>
+                        </div>
+                    </div>
+                </div>       
+            </h:form>
+            <h:form id="formNovoUtilizador">
+                <p:dialog header="Novo Utilizador" widgetVar="dlg1" id="createDialog" resizable="false"  minHeight="40" width="400" showEffect="fade" >
+                <div class="card-body lg-12">
+                        <hr class="horizontal dark my-2" />
+                        <div class="row g-3">
+                            <div class="col-md-12 py-1" >
+                              <p:outputLabel for="desc" value="Nome" />
+                              <p:inputText id="desc" value="#{utilizadorBean.utilizador.nome}" placeholder="Informe o nome" class="form-control" required="true" requiredMessage="Insere o nome"   />
+                           </div>  
+                           <div class="col-md-12 py-1">
+                                 <p:outputLabel for="perf" value="Perfil" />
+                                 <p:selectOneMenu
+                                     value="#{utilizadorBean.utilizador.idPerfil}"
+                                     filter="true"
+                                     class="form-control"
+                                     label="Selecione o perfil"
+                                     converter ="perfilConverter"
+                                     id="perf"
+                                     required="true"
+                                     requiredMessage="Tem de selecionar o perfil"
+                                     >
+                                     <f:selectItem itemLabel="Selecione..." itemValue="#{null}"  noSelectionOption="false"   />
+                                     <f:selectItems 
+                                         value="#{perfilBean.listar()}"
+                                         var="item"
+                                         itemValue="#{item}"
+                                         itemLabel="#{item.nome}"
+                                         />
+                                 </p:selectOneMenu>      
+                           </div>
+                            <div class="col-md-12 py-1" >
+                              <p:outputLabel for="inlineFeedback" value="Senha" />
+                              <p:password id="inlineFeedback" value="#{utilizadorBean.utilizador.senha}" feedback="true" inline="true" class="form-control" required="true" requiredMessage="Insere a senha" />
+                            </div>
+                            <div class="col-md-12 py-1" >
+                              <p:outputLabel for="confSenha" value="confirmar Senha" />
+                              <p:password id="confSenha" value="#{utilizadorBean.utilizador.senha}" feedback="true" inline="true" class="form-control" required="true" requiredMessage="Confirma a senha" />
+                            </div>
+                        </div>
+                        <hr class="horizontal dark my-2" />
+                        <p:commandButton
+                                         styleClass="ui-button-danger"
+                                         value="fechar"
+                                         icon="pi pi-times"
+                                         ajax="true"
+                                         onclick="PF('createDialog').hide();"
+                                         process="@this" 
+                                         />
+
+                        <p:commandButton  
+                                         value="salvar" 
+                                         icon="pi pi-check"
+                                         action="#{utilizadorBean.salvar()}"
+                                         update="formNovoUtilizador,formList"
+                                         ajax="true"  
+                                         onclick="createDialog.hide()" 
+                                          />
+
+             </div>
+            </p:dialog>
+      </h:form>
+        </ui:define> 
+    </ui:composition>
+</html>
+

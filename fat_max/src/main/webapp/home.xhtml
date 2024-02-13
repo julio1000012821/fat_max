@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/template.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui" 
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+        <ui:define name="title">
+            <h:outputText value="Home"> home</h:outputText>
+            <style>
+                .center{
+                   text-align: center;  
+                }
+            </style>
+        </ui:define>
+        <ui:define name="centerContent">
+            <h:form id="formRegisto">
+                <p:idleMonitor timeout="600000">
+                    <p:ajax event="idle" listener="#{loginBean.logout()}" />
+                </p:idleMonitor>
+                <div class="container-fluid py-5">
+                    <!-- create line-->
+                      <div class="row">
+                            <!-- Modulo de Gestão de Licenças --> 
+                            <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+                                <div class="card">
+                                   <!--h:link  outcome="dashboarDiario"  style="color:black;" -->
+                                    <!--<h:link  outcome="notacaoAnual.jsp"  style="color:black;">-->
+                                    <div class="card-header p-3 pt-1">
+                                      <div class="icon icon-lg icon-shape bg-gradient-primary sohadow-primary text-center border-radius-xl mt-n4 position-absolute">
+                                        <i class="material-icons opacity-10">assignment_turned_in</i>
+                                      </div>
+                                      <div class="text-end  pt-1">
+                                       <!-- <p class="text-sm mb-0 text-capitalize">Funcionarios</p>-->
+                                        <h5 class="mb-0">Vendas</h5>
+                                      </div>
+                                    </div>
+                                    <hr class="dark horizontal my-0" />
+                                    <div class="card-footer p-3">
+                                      <p class="mb-0"><span class="text-success text-sm font-weight-bolder"></span>Vendas Diaria</p>
+                                    </div>
+                                    <!--</h:link>-->
+                                 <!--/h:link-->
+                                </div>
+                           </div> 
+                           <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+                              <div class="card">
+                                <!--h:link  outcome="homeBolsa"  style="color:black;"-->
+                                <div class="card-header p-3 pt-2">
+                                  <div class="icon icon-lg icon-shape bg-gradient-success shadow-info text-center border-radius-xl mt-n4 position-absolute">
+                                    <i class="material-icons opacity-10">people</i>
+                                  </div>
+                                  <div class="text-end  pt-1">
+                                    <h5 class="mb-0">Produtos/Serviços</h5>
+                                  </div>
+                                </div>
+                                <hr class="dark horizontal my-0" />
+                                <div class="card-footer p-3">
+                                  <p class="mb-0"><span class="text-success text-sm font-weight-bolder"></span>Produtos Mais vendidos</p>
+                                </div>
+                                <!--/h:link-->
+                              </div>
+                           </div> 
+                            <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+                             <div class="card">
+                                 <a href="notacaoAnual.jsp"  style="color:black; display: inline; " >
+                                 <!--<h:link  outcome="notacaoAnual.jsp"  style="color:black;">-->
+                               <div class="card-header p-3 pt-2">
+                                 <div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
+                                   <i class="material-icons opacity-10">assignment_turned_in</i>
+                                 </div>
+                                 <div class="text-end  pt-1">
+                                  <!-- <p class="text-sm mb-0 text-capitalize">Funcionarios</p>-->
+                                   <h5 class="mb-0">Caducidade</h5>
+                                 </div>
+                               </div>
+                               <hr class="dark horizontal my-0" />
+                               <div class="card-footer p-3">
+                                 <p class="mb-0" ><span class="text-success text-sm font-weight-bolder"></span>Produtos em caducidade</p>
+                               </div>
+                               <!--</h:link>-->
+                               </a>
+                             </div>
+                           </div> 
+                          <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+                             <div class="card">
+                               <h:link  outcome="home"  style="color:black;">
+                                 <!--<h:link  outcome="notacaoAnual.jsp"  style="color:black;">-->
+                               <div class="card-header p-3 pt-1">
+                                 <div class="icon icon-lg icon-shape bg-gradient-dark shadow-dark text-center border-radius-xl mt-n4 position-absolute">
+                                   <i class="material-icons opacity-10">assignment</i>
+                                 </div>
+                                 <div class="text-end  pt-1">
+                                  <!-- <p class="text-sm mb-0 text-capitalize">Funcionarios</p>-->
+                                   <h5 class="mb-0">Feixo</h5>
+                                 </div>
+                               </div>
+                               <hr class="dark horizontal my-0" />
+                               <div class="card-footer p-3">
+                                 <p class="mb-0"    ><span class="text-success text-sm font-weight-bolder"></span>Feixo de Caixa</p>
+                               </div>
+                               <!--</h:link>-->
+                              </h:link>
+                             </div>
+                           </div> 
+                    </div>
+            </div>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+

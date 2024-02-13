@@ -1,0 +1,156 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="template.xhtml">
+        <ui:define name="title">
+            Moedas
+        </ui:define> 
+        <ui:define name="centerContent" >
+            <h:form id="formList">
+                <p:idleMonitor timeout="600000">
+                    <p:ajax event="idle" listener="#{loginBean.logout()}" />
+                </p:idleMonitor>
+                <p:growl id="message" showDetail="true"/>
+                <div class="container  py-5">    
+                    <div class="card p-col-10">
+                        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                            <div class="bg-gradient-info shadow-info border-radius-lg pt-3 pb-2">
+                                <div class="row g-3">
+                                    <div class="col-md-10">
+                                         <h6 class="text-white text-capitalize ps-3">Moedas</h6>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="icon icon-shape" style="position: relative;left:40px; ">
+                                            <p:commandButton type="button" icon="pi pi-plus" title="Nova Moeda" styleClass="rounded-button ui-button-warning" 
+                                                             update="formNovaMoeda" onclick="PF('dlg1').show()" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> 
+                            <div class="card-body">
+                                <div class="row g-2">
+                                        <p:toolbar>
+                                              <p:toolbarGroup align="right">
+                                                  <p:commandButton icon="pi pi-file-excel" styleClass="ui-button-info" title="exportar csv" ajax="false">
+                                                           <p:dataExporter type="csv" target="datalist" fileName="moedas"  />
+                                                       </p:commandButton>
+                                                       <!--p:commandButton
+                                                           icon="pi pi-file-excel" 
+                                                           styleClass="ui-button-help" 
+                                                           title="exportar Excel" 
+                                                           action ="#{produtoBean.exportarExcel()}"
+                                                           onclick="target='_blank'"
+                                                           ajax="false" /-->
+                                                           
+                                                       <p:commandButton icon="pi pi-file-excel" styleClass="ui-button-help" title="exportar xml/xls" ajax="false">
+                                                           <p:dataExporter type="xls" target="datalist" fileName="moedas" />
+                                                       </p:commandButton>
+                                              </p:toolbarGroup>
+                                       </p:toolbar>
+                                </div>
+                                <p:dataTable id="datalist" widgetVar="dtProducts" var="item" value="#{moedaBean.listar()}"
+                                reflow="true" 
+                                styleClass="products-table"
+                                selection="#{moedaBean.listaFiltrada}"
+                                rowKey="#{item.idMoeda}"
+                                paginator="true"
+                                rows="10" 
+                                rowSelectMode="add"
+                                rowIndexVar="index"
+                                emptyMessage="Nenhum registo encontrado."
+                                paginatorPosition="bottom"
+                                style="font-size: 13px;"
+                                >
+                                   <f:facet name="header">
+                                       <div class="products-table-header" >
+                                           <p:commandButton id="toggler" type="button" value="Colunas" icon="pi pi-align-justify"/>
+                                           <p:columnToggler datasource="datalist" trigger="toggler">
+                                               <p:ajax />
+                                           </p:columnToggler>
+                                           <p:outputLabel value="n" style="color:white;"  />
+                                           <span class="filter-container ui-input-icon-left" style="float:right;" >
+                                             <i class="pi pi-search"></i>
+                                             <p:inputText id="globalFilter" onkeydown="PF('dtProducts').filter()" placeholder="Pesquisar"  />      
+                                           </span>
+                                       </div>
+                                   </f:facet>
+                                  <p:column headerText="Nº Ord." style="width: 50px;" >
+                                       <h:outputText value="#{index + 1}" />
+                                 </p:column>
+                                 <p:column headerText="Nome" sortBy="#{item.nome}"  filterBy="#{item.nome}" filterStyle="display:none;" >
+                                    <h:outputText value="#{item.nome}"/>
+                                 </p:column>
+                                 <p:column headerText="Valor" sortBy="#{item.valor}"  filterBy="#{item.valor}" filterStyle="display:none;" >
+                                     <h:outputText value="#{item.valor}"/>
+                                 </p:column>
+                                 <p:column exportable="false" headerText="Operações">
+                                    <p:commandButton 
+                                        icon="pi pi-pencil"                                     
+                                        styleClass="edit-button rounded-button ui-button-success" 
+                                        oncomplete="PF('dlgEditar').show()" 
+                                        process="@this"
+                                        update="@form"
+                                        action="#{moedaBean.setMoeda(item)}"
+                                        >
+                                       <!--<f:setPropertyActionListener value="#//{product}" target="#//{crudView.selectedProduct}"/>
+                                        <p:resetInput target=":form:manage-product-content"/>-->
+                                    </p:commandButton>
+                                    <p:commandButton class="ui-button-danger rounded-button"
+                                                     icon="pi pi-trash"
+                                                     process="@this"
+                                                     update="@form"
+                                                     ajax="true"
+                                                     action="#{moedaBean.remover(item)}" /> 
+                               </p:column>
+                               </p:dataTable>
+                            </div>
+                        </div>
+                    </div>
+                </div>       
+            </h:form>
+            <h:form id="formNovaMoeda">
+                <p:dialog header="Nova Moeda" widgetVar="dlg1" id="createDialog" resizable="false"  minHeight="40" width="400" showEffect="fade" >
+                <div class="card-body lg-12">
+                        <hr class="horizontal dark my-2" />
+                        <div class="row g-3">
+                            <div class="col-md-12 py-1" >
+                              <p:outputLabel for="desc" value="nome" />
+                              <p:inputText id="desc" value="#{moedaBean.moeda.nome}" placeholder="Informe a moeda" class="form-control"   />
+                           </div>
+                            <div class="col-md-12 py-1" >
+                              <p:outputLabel for="desValue" value="Valor" />
+                              <p:inputText id="desValue" value="#{moedaBean.moeda.valor}" placeholder="Informe o valor" class="form-control"   />
+                           </div>
+                           
+                        </div>
+                        <hr class="horizontal dark my-2" />
+                        <p:commandButton
+                                         styleClass="ui-button-danger"
+                                         value="fechar"
+                                         icon="pi pi-times"
+                                         ajax="true"
+                                         onclick="PF('createDialog').hide();"
+                                         process="@this" 
+                                         />
+
+                        <p:commandButton  
+                                         value="salvar" 
+                                         icon="pi pi-check"
+                                         action="#{moedaBean.salvar()}"
+                                         update="formNovaMoeda,formList"
+                                         ajax="true"  
+                                         onclick="createDialog.hide()" 
+                                          />
+
+             </div>
+            </p:dialog>
+      </h:form>
+        </ui:define> 
+    </ui:composition>
+</html>
+

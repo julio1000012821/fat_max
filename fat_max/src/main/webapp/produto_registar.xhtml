@@ -1,0 +1,204 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:composition template="template.xhtml">
+        <ui:define name="title">
+            Produtos
+        </ui:define> 
+        <ui:define name="centerContent" >
+            <h:form id="formList">
+                <p:idleMonitor timeout="600000">
+                    <p:ajax event="idle" listener="#{loginBean.logout()}" />
+                </p:idleMonitor>
+                <p:growl id="message" showDetail="true"/>
+                <div class="container  py-5">    
+                    <div class="card p-col-10">
+                        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                            <div class="bg-gradient-info shadow-info border-radius-lg pt-3 pb-2">
+                                <div class="row g-3">
+                                    <div class="col-md-10">
+                                         <h6 class="text-white text-capitalize ps-3">Registo de Produto/Serviço</h6>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="icon icon-shape" style="position: relative;left:40px; ">
+                                            <p:commandButton type="button" icon="pi pi-plus" title="Novo Serviço" styleClass="rounded-button ui-button-warning" 
+                                                             update="formNovoProd" onclick="PF('dlg1').show()" />
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div> 
+                            <div class="card-body">
+                                <div class="row g-2">
+                                        <p:toolbar>
+                                              <p:toolbarGroup align="right">
+                                                  <p:commandButton icon="pi pi-file-excel" styleClass="ui-button-info" title="exportar csv" ajax="false">
+                                                           <p:dataExporter type="csv" target="datalist" fileName="produtos"  />
+                                                       </p:commandButton>
+                                                       <!--p:commandButton
+                                                           icon="pi pi-file-excel" 
+                                                           styleClass="ui-button-help" 
+                                                           title="exportar Excel" 
+                                                           action ="#{produtoBean.exportarExcel()}"
+                                                           onclick="target='_blank'"
+                                                           ajax="false" /-->
+                                                           
+                                                       <p:commandButton icon="pi pi-file-excel" styleClass="ui-button-help" title="exportar xml/xls" ajax="false">
+                                                           <p:dataExporter type="xls" target="datalist" fileName="products" />
+                                                       </p:commandButton>
+                                              </p:toolbarGroup>
+                                       </p:toolbar>
+                                </div>
+                                <p:dataTable id="datalist" widgetVar="dtProducts" var="item" value="#{produtoBean.listar()}"
+                                reflow="true" 
+                                styleClass="products-table"
+                                selection="#{produtoBean.listaFiltrada}"
+                                rowKey="#{item.idProduto}"
+                                paginator="true"
+                                rows="10" 
+                                rowSelectMode="add"
+                                rowIndexVar="index"
+                                emptyMessage="Nenhum registo encontrado."
+                                paginatorPosition="bottom"
+                                style="font-size: 13px;"
+                                >
+                                   <f:facet name="header">
+                                       <div class="products-table-header" >
+                                           <p:commandButton id="toggler" type="button" value="Colunas" icon="pi pi-align-justify"/>
+                                           <p:columnToggler datasource="datalist" trigger="toggler">
+                                               <p:ajax />
+                                           </p:columnToggler>
+                                           <p:outputLabel value="n" style="color:white;"  />
+                                           <span class="filter-container ui-input-icon-left" style="float:right;" >
+                                             <i class="pi pi-search"></i>
+                                             <p:inputText id="globalFilter" onkeydown="PF('dtProducts').filter()" placeholder="Pesquisar"  />      
+                                           </span>
+                                       </div>
+                                   </f:facet>
+                                  <p:column headerText="Nº Ord." style="width: 50px;" >
+                                       <h:outputText value="#{index + 1}" />
+                                 </p:column>
+                                 <p:column headerText="Descrição" sortBy="#{item.descricao}"  filterBy="#{item.descricao}" filterStyle="display:none;" >
+                                    <h:outputText value="#{item.descricao}"/>
+                                 </p:column>
+                                    <p:column headerText="Categoria" sortBy="#{item.idCategoriaProduto.nome}"  filterBy="#{item.idCategoriaProduto.nome}" filterStyle="display:none;" >
+                                        <h:outputText value="#{item.idCategoriaProduto.nome}"/>
+                                 </p:column>
+                                 <p:column headerText="Quantidade" style="text-align: center;">
+                                    <h:outputText value="#{item.quantidade}" />
+                                 </p:column>
+                                    <p:column headerText="prec. compra"  style="text-align: center;">
+                                        <h:outputText value="#{item.precoCompra}" >
+                                          <f:convertNumber pattern="#,##0.00" />
+                                        </h:outputText>
+                                 </p:column>
+                                 <p:column headerText="prec. venda" style="text-align: center;">
+                                    <h:outputText value="#{item.precoVenda}" >
+                                        <f:convertNumber pattern="#,##0.00" />
+                                    </h:outputText>
+                                 </p:column>
+                                    <p:column headerText="quantidade existente"  style="text-align: center;">
+                                        <h:outputText value="#{item.quantidadeExistente}" />
+                                 </p:column>
+                                 <p:column exportable="false" headerText="Operações">
+                                    <p:commandButton 
+                                        icon="pi pi-pencil"                                     
+                                        styleClass="edit-button rounded-button ui-button-success" 
+                                        oncomplete="PF('dlgEditar').show()" 
+                                        process="@this"
+                                        update="@form"
+                                        action="#{produtoBean.setProduto(item)}"
+                                        >
+                                       <!--<f:setPropertyActionListener value="#//{product}" target="#//{crudView.selectedProduct}"/>
+                                        <p:resetInput target=":form:manage-product-content"/>-->
+                                    </p:commandButton>
+                                    <p:commandButton class="ui-button-danger rounded-button"
+                                                     icon="pi pi-trash"
+                                                     process="@this"
+                                                     update="@form"
+                                                     ajax="true"
+                                                     action="#{produtoBean.remover(item)}" /> 
+                               </p:column>
+                               </p:dataTable>
+                            </div>
+                        </div>
+                    </div>
+                </div>       
+            </h:form>
+            <h:form id="formNovoProd">
+                <p:dialog header="Novo Produto" widgetVar="dlg1" id="createDialog" resizable="false"  minHeight="40" width="800" showEffect="fade" rendered="#{produtoBean.produto.idProduto == null}">
+                <div class="card-body lg-12">
+                        <hr class="horizontal dark my-2" />
+                        <div class="row g-3">
+                            <div class="col-md-12 py-1" >
+                              <p:outputLabel for="desc" value="Descrição" />
+                              <p:inputText id="desc" value="#{produtoBean.produto.descricao}" placeholder="Informe o produto" class="form-control"   />
+                           </div>  
+                           <div class="col-md-6 py-1">
+                                 <p:outputLabel for="cat" value="Categoria" />
+                                 <p:selectOneMenu
+                                     value="#{produtoBean.idCategoria}"
+                                     filter="true"
+                                     class="form-control"
+                                     label="Selecione a categoria"
+                                     id="cat"
+                                     required="true"
+                                     requiredMessage="Tem de selecionar a categoria"
+                                     >
+                                     <f:selectItem itemLabel="Selecionar..." itemValue="#{0}"  noSelectionOption="false"   />
+                                     <f:selectItems 
+                                         value="#{categoriaProdutoBean.listar()}"
+                                         var="item"
+                                         itemValue="#{item.idCategoriaProduto}"
+                                         itemLabel="#{item.nome}"
+                                         />
+                                 </p:selectOneMenu>      
+                           </div>
+                           <div class="col-md-6 py-1">
+                                 <p:outputLabel for="precCompra" value="Preço de compra" />
+                                 <p:inputText id="precCompra" value="#{produtoBean.produto.precoCompra}" placeholder="Informe o preço de compra" class="form-control"  />
+                           </div>
+                           <div class="col-md-6 py-1">
+                                 <p:outputLabel for="precVenda" value="Preço de venda" />
+                                 <p:inputText id="precVenda" value="#{produtoBean.produto.precoVenda}" placeholder="Informe o preço de venda" class="form-control"  />
+                           </div>
+                           <div class="col-md-6 py-1">
+                                 <p:outputLabel for="qtd" value="Quantidade adquirida" />
+                                 <p:inputText id="qtd" value="#{produtoBean.produto.quantidade}" placeholder="Quantidade" class="form-control"  />
+                           </div>
+                            <div class="col-md-6 py-1">
+                                 <p:outputLabel for="qtdEx" value="Quantidade Existente" />
+                                 <p:inputText id="qtdEx" value="#{produtoBean.produto.quantidadeExistente}" placeholder="Quantidade existente" class="form-control"  />
+                           </div>
+                    </div>
+                        <hr class="horizontal dark my-2" />
+                        <p:commandButton
+                                         styleClass="ui-button-danger"
+                                         value="fechar"
+                                         icon="pi pi-times"
+                                         ajax="true"
+                                         onclick="PF('createDialog').hide();"
+                                         process="@this" 
+                                         />
+
+                        <p:commandButton  
+                                         value="salvar" 
+                                         icon="pi pi-check"
+                                         action="#{produtoBean.salvar()}"
+                                         update="formNovoProd,formList"
+                                         ajax="true"  
+                                         onclick="createDialog.hide()" 
+                                          />
+
+             </div>
+            </p:dialog>
+      </h:form>
+        </ui:define> 
+    </ui:composition>
+</html>
+
